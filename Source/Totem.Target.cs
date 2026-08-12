@@ -11,6 +11,5 @@ public class TotemTarget : TargetRules
 		DefaultBuildSettings = BuildSettingsVersion.V5;
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_4;
 		ExtraModuleNames.Add("Totem");
-		ExtraModuleNames.Add("TotemGame");
 	}
 }
