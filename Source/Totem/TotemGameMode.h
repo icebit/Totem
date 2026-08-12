@@ -15,7 +15,7 @@ class TOTEM_API ATotemGameMode : public AGameMode
 	GENERATED_BODY()
 
 public:
-	virtual void Killed(AController* Killer, AController* KilledPlayer, APawn* KilledPawn, const UDamageType* DamageType);
+	void Killed(AController* Killer, AController* KilledPlayer, APawn* KilledPawn, const UDamageType* DamageType);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	bool CanDamage(class AController* Attacker, class AController* Victim);
