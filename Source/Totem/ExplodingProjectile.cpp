@@ -6,7 +6,18 @@
 
 void AExplodingProjectile::OnImpact(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (GetLocalRole() == ROLE_Authority && !bExploded)
+	if (bExploded)
+	{
+		return;
+	}
+
+	if (IsCosmetic())
+	{
+		Super::OnImpact(HitComponent, OtherActor, OtherComp, NormalImpulse, Hit);
+		return;
+	}
+
+	if (GetLocalRole() == ROLE_Authority)
 	{
 		// effects and damage origin shouldn't be placed inside mesh at impact point
 		const FVector NudgedImpactLocation = Hit.ImpactPoint + Hit.ImpactNormal * 10.0f;

@@ -102,6 +102,19 @@ protected:
 	// Time of last successful weapon fire
 	float LastFireTime;
 
+	// Smallest interval the server will accept between shots when TimeBetweenShots is 0
+	UPROPERTY(EditDefaultsOnly, Category = Netcode)
+	float MinServerFireInterval;
+
+	// Fraction of TimeBetweenShots a client may fire early before the server drops the shot
+	UPROPERTY(EditDefaultsOnly, Category = Netcode)
+	float ServerFireRateTolerance;
+
+	// [server] Rejects shots arriving faster than this weapon's fire rate allows
+	bool AcceptServerFire();
+
+	float LastAcceptedServerFireTime;
+
 	EWeaponState CurrentState;
 
 	void DetermineWeaponState() override;

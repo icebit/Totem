@@ -18,6 +18,29 @@ AShooterWeapon::AShooterWeapon()
 	bRefiring = false;
 	LastFireTime = 0.0f;
 	bWantsToFire = false;
+	MinServerFireInterval = 0.05f;
+	ServerFireRateTolerance = 0.15f;
+	LastAcceptedServerFireTime = -1000.0f;
+}
+
+bool AShooterWeapon::AcceptServerFire()
+{
+	if (GetLocalRole() != ROLE_Authority)
+	{
+		return true;
+	}
+
+	const float Now = GetWorld()->GetTimeSeconds();
+	const float Interval = FMath::Max(TimeBetweenShots, MinServerFireInterval);
+	const float Earliest = LastAcceptedServerFireTime + Interval * (1.0f - ServerFireRateTolerance);
+
+	if (Now < Earliest)
+	{
+		return false;
+	}
+
+	LastAcceptedServerFireTime = Now;
+	return true;
 }
 
 void AShooterWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

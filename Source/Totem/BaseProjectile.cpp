@@ -20,7 +20,7 @@ ABaseProjectile::ABaseProjectile()
 	CollisionComp->InitSphereRadius(5.0f);
 	CollisionComp->AlwaysLoadOnClient = true;
 	CollisionComp->AlwaysLoadOnServer = true;
-	CollisionComp->bTraceComplexOnMove = true;
+	CollisionComp->bTraceComplexOnMove = false;
 	CollisionComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	CollisionComp->SetCollisionObjectType(COLLISION_PROJECTILE);
 	CollisionComp->SetCollisionResponseToAllChannels(ECR_Ignore);
@@ -41,13 +41,29 @@ ABaseProjectile::ABaseProjectile()
 	SetRemoteRoleForBackwardsCompat(ROLE_SimulatedProxy);
 	bReplicates = true;
 	bExploded = false;
-	SetReplicatingMovement(true);
+	bCosmetic = false;
+	bHideForPredictingShooter = true;
+
+	// Straight line constant speed flight simulates identically everywhere, so the spawn
+	// transform is enough and per frame movement updates would only add jitter.
+	SetReplicatingMovement(false);
+}
+
+void ABaseProjectile::MakeCosmetic()
+{
+	bCosmetic = true;
+	SetReplicates(false);
+}
+
+float ABaseProjectile::GetLaunchSpeed() const
+{
+	return MovementComp ? MovementComp->InitialSpeed : 0.0f;
 }
 
 void ABaseProjectile::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	if (GetLocalRole() == ROLE_Authority) {
+	if (GetLocalRole() == ROLE_Authority || bCosmetic) {
 		CollisionComp->OnComponentHit.AddDynamic(this, &ABaseProjectile::OnImpact);
 	}
 	CollisionComp->MoveIgnoreActors.Add(GetInstigator());
@@ -57,6 +73,21 @@ void ABaseProjectile::PostInitializeComponents()
 	MyController = GetInstigatorController();
 }
 
+void ABaseProjectile::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// The shooter already sees its own predicted copy
+	if (bHideForPredictingShooter && !bCosmetic && GetLocalRole() != ROLE_Authority)
+	{
+		const APawn* InstigatorPawn = GetInstigator();
+		if (InstigatorPawn && InstigatorPawn->IsLocallyControlled())
+		{
+			SetActorHiddenInGame(true);
+		}
+	}
+}
+
 // To be deleted
 void ABaseProjectile::InitVelocity(FVector& ShootDirection)
 {
@@ -64,17 +95,33 @@ void ABaseProjectile::InitVelocity(FVector& ShootDirection)
 
 void ABaseProjectile::OnImpact(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (GetLocalRole() == ROLE_Authority && !bExploded)
+	if (bExploded)
+	{
+		return;
+	}
+
+	if (bCosmetic)
+	{
+		bExploded = true;
+		HitEffects(Hit);
+		DisableAndDestroy();
+		return;
+	}
+
+	if (GetLocalRole() == ROLE_Authority)
 	{
 		if (OtherActor)
 		{
-			UGameplayStatics::ApplyPointDamage(OtherActor, Damage, NormalImpulse, Hit, GetInstigator()->Controller, this, DamageType);
+			APawn* InstigatorPawn = GetInstigator();
+			AController* InstigatorController = InstigatorPawn ? InstigatorPawn->Controller : MyController.Get();
+
+			UGameplayStatics::ApplyPointDamage(OtherActor, Damage, NormalImpulse, Hit, InstigatorController, this, DamageType);
 
 			// Notify hit if not dedicated server
 			if (GetNetMode() != NM_DedicatedServer)
 			{
 				if (OtherActor->CanBeDamaged()) {
-					ATotemPlayerController* PC = Cast<ATotemPlayerController>(OwnerWeapon->MyPawn->Controller);
+					ATotemPlayerController* PC = Cast<ATotemPlayerController>(InstigatorController);
 					if (PC)
 					{
 						PC->NotifyHitEnemy();
@@ -82,11 +129,11 @@ void ABaseProjectile::OnImpact(UPrimitiveComponent* HitComponent, AActor* OtherA
 				}
 			}
 		}
- 
+
 		// Hit effects
 		bExploded = true;
 		HitEffects(Hit);
-		
+
 		DisableAndDestroy();
 	}
 }

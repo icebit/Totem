@@ -114,6 +114,13 @@ void AInstantWeapon::ServerNotifyHit_Implementation(FVector Origin, const FHitRe
 		}
 	}*/
 
+	// This weapon still trusts the client's reported hit. Rate limiting is the only guard until
+	// DualWands is reparented to AProjectileWeapon.
+	if (!AcceptServerFire())
+	{
+		return;
+	}
+
 	ProcessInstantHit_Confirmed(Impact, Origin, ShootDir, RandomSeed, ReticleSpread);
 }
 

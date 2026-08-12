@@ -19,6 +19,14 @@ public:
 	// Setup velocity
 	void InitVelocity(FVector& ShootDirection);
 
+	// Turn this into a client side visual only projectile. Must be called before FinishSpawningActor.
+	void MakeCosmetic();
+
+	FORCEINLINE bool IsCosmetic() const { return bCosmetic; }
+
+	// Launch speed including any blueprint override, readable from the class default object
+	float GetLaunchSpeed() const;
+
 	// Handle hit
 	UFUNCTION()
 	virtual void OnImpact(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
@@ -50,6 +58,15 @@ protected:
 	class USphereComponent* CollisionComp;
 
 	class AProjectileWeapon* OwnerWeapon;
+
+	virtual void BeginPlay() override;
+
+	// Visual only duplicate spawned on the firing client; never applies damage
+	bool bCosmetic;
+
+	// Hide the replicated projectile on the machine that predicted its own copy
+	UPROPERTY(EditDefaultsOnly, Category = Netcode)
+	bool bHideForPredictingShooter;
 
 	UPROPERTY(Transient, ReplicatedUsing = OnRep_Exploded)
 	bool bExploded;
