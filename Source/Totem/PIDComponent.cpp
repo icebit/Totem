@@ -33,7 +33,7 @@ void UPIDComponent::AddMeasuredError(const FPIDErrorItemStruct& PIDErrorItem)
 	// remove last item in array if we reached desired amount of errors to track
 	if (MeasuredErrors.Num() > NumOfErrorsToStore)
 	{
-		MeasuredErrors.Pop(true);
+		MeasuredErrors.Pop(EAllowShrinking::No);
 	}
 }
 

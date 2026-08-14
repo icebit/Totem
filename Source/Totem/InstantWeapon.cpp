@@ -1,6 +1,6 @@
 #include "InstantWeapon.h"
 #include "Engine/CollisionProfile.h"
-#include <Runtime\Engine\Public\Net\UnrealNetwork.h>
+#include "Net/UnrealNetwork.h"
 #include "TotemPlayerController.h"
 
 AInstantWeapon::AInstantWeapon()

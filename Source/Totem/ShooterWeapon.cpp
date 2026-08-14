@@ -4,9 +4,9 @@
 #include "BaseProjectile.h"
 #include "Camera/CameraComponent.h"
 #include "Engine/CollisionProfile.h"
-#include <Runtime\Engine\Classes\Kismet\GameplayStatics.h>
-#include <Runtime\Engine\Public\Net\UnrealNetwork.h>
-#include <Totem\TotemPlayerController.h>
+#include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
+#include "TotemPlayerController.h"
 
 // Sets default values
 AShooterWeapon::AShooterWeapon()

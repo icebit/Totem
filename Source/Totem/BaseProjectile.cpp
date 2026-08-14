@@ -10,7 +10,7 @@
 #include "Particles/ParticleSystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "UObject/ConstructorHelpers.h"
-#include <Runtime\Engine\Public\Net\UnrealNetwork.h>
+#include "Net/UnrealNetwork.h"
 
 #include "TotemPlayerController.h"
 
@@ -113,7 +113,7 @@ void ABaseProjectile::OnImpact(UPrimitiveComponent* HitComponent, AActor* OtherA
 		if (OtherActor)
 		{
 			APawn* InstigatorPawn = GetInstigator();
-			AController* InstigatorController = InstigatorPawn ? InstigatorPawn->Controller : MyController.Get();
+			AController* InstigatorController = InstigatorPawn ? InstigatorPawn->Controller.Get() : MyController.Get();
 
 			UGameplayStatics::ApplyPointDamage(OtherActor, Damage, NormalImpulse, Hit, InstigatorController, this, DamageType);
 

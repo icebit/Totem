@@ -2,7 +2,7 @@
 
 
 #include "ExplodingProjectile.h"
-#include <Runtime\Engine\Classes\Kismet\GameplayStatics.h>
+#include "Kismet/GameplayStatics.h"
 
 void AExplodingProjectile::OnImpact(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {

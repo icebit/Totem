@@ -2,7 +2,7 @@
 
 #include "BaseWeapon.h"
 #include "TotemPawn.h"
-#include <Runtime\Engine\Public\Net\UnrealNetwork.h>
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 ABaseWeapon::ABaseWeapon()

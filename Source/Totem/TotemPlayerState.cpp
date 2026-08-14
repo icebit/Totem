@@ -2,7 +2,7 @@
 
 
 #include "TotemPlayerState.h"
-#include <Runtime\Engine\Public\Net\UnrealNetwork.h>
+#include "Net/UnrealNetwork.h"
 
 void ATotemPlayerState::ScoreKill(ATotemPlayerState* Victim)
 {

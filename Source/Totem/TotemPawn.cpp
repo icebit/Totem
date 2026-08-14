@@ -15,10 +15,10 @@
 #include "Engine/CollisionProfile.h"
 #include "GameFramework/GameModeBase.h"
 #include "Kismet/KismetMathLibrary.h"
-#include <Runtime\Engine\Classes\Kismet\GameplayStatics.h>
-#include <Runtime\Engine\Public\Net\UnrealNetwork.h>
+#include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 #include "PIDComponent.h"
-#include <Totem\TotemPlayerController.h>
+#include "TotemPlayerController.h"
 
 ATotemPawn::ATotemPawn()
 {

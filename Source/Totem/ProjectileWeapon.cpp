@@ -5,8 +5,8 @@
 #include "Camera/CameraComponent.h"
 #include "TotemPawn.h"
 #include "GameFramework/PlayerState.h"
-#include <Runtime\Engine\Classes\Kismet\GameplayStatics.h>
-#include <Runtime\Engine\Classes\Kismet\KismetMathLibrary.h>
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 
 AProjectileWeapon::AProjectileWeapon()
 {
